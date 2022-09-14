@@ -57,4 +57,32 @@ const iniciarSession = catchAsync(async function (req, res, next) {
   });
 });
 
-module.exports = { crearUsuario, iniciarSession };
+const actualizarUsuario = catchAsync(async function (req, res) {
+  const { user } = req;
+  const { name, email } = req.body;
+
+  await user.update({ name, email });
+
+  res.status(200).json({
+    message: 'Datos actualizados',
+    status: 'operacion exitosa',
+  });
+});
+
+const desabilitarUsuario = catchAsync(async function (req, res) {
+  const { user } = req;
+
+  await user.update({ status: 'disabled' });
+
+  res.status(200).json({
+    message: 'Usuario Desabilitado',
+    status: 'operacion exitosa',
+  });
+});
+
+module.exports = {
+  crearUsuario,
+  iniciarSession,
+  actualizarUsuario,
+  desabilitarUsuario,
+};
