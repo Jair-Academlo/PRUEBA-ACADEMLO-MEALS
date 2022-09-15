@@ -1,11 +1,15 @@
 //modelos
 const { User } = require('../models/user.model');
+const { Order } = require('../models/order.model');
+const { Meal } = require('../models/meal.model');
+const { Restaurant } = require('../models/restaurant.model');
 //Utils
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
 //librerias
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
 require('dotenv').config({ path: '../config.env' });
 
 const crearUsuario = catchAsync(async function (req, res, next) {
@@ -80,9 +84,38 @@ const desabilitarUsuario = catchAsync(async function (req, res) {
   });
 });
 
+const obtenerOrdenes = catchAsync(async function (req, res) {
+  const { sessionUser } = req;
+
+  const orders = await Order.findAll({
+    where: { userId: sessionUser.id },
+    /* include: {
+      model: Meal,
+      include: {
+        Restaurant,
+      },
+    },*/
+  });
+
+  res.status(201).json({
+    status: 'success',
+    orders,
+  });
+});
+
+const ordenesPorId = catchAsync(async function (req, res) {
+  const { order } = req;
+
+  res.status(200).json({
+    status: 'operacion exitosa',
+    order,
+  });
+});
 module.exports = {
   crearUsuario,
   iniciarSession,
   actualizarUsuario,
   desabilitarUsuario,
+  obtenerOrdenes,
+  ordenesPorId,
 };
